@@ -1,8 +1,10 @@
 package com.example.app.feature.search.ui
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,13 +12,15 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.app.R
-import com.example.app.common.AppUtils
 import com.example.app.common.Failure
 import com.example.app.common.Success
+import com.example.app.feature.search.util.SearchAdapter
 import com.example.app.feature.search.viewmodels.SearchViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_search.*
 
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var viewAdapter: SearchAdapter
@@ -57,10 +61,37 @@ class SearchActivity : AppCompatActivity() {
                 else -> false
             }
         }
+
+   /*     btn_post.setOnClickListener {
+            lifecycleScope.launch {
+                var result: Result<SubmitPostResponse>? = null
+                withContext(Dispatchers.IO) {
+                    result = TypeCodeApi().submitPost(SubmitPostInfo("foo", "bar", 1))
+                }
+                withContext(Dispatchers.Main) {
+                    if (result is Success) {
+                        val id = (result as Success<SubmitPostResponse>).data.id
+                        Toast.makeText(
+                            this@SearchActivity,
+                            "successfully posted: $id",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    else {
+                        val error = (result as Failure<SubmitPostResponse>).errorString
+                        Toast.makeText(
+                            this@SearchActivity,
+                            "Failure: $error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }*/
     }
 
     private fun observeViewModel() {
-        searchViewModel.repos.observe(this, Observer {
+        searchViewModel.reposResult.observe(this, Observer {
             progressBar.visibility = View.GONE
             when (it) {
                 is Success -> {
@@ -89,8 +120,19 @@ class SearchActivity : AppCompatActivity() {
 
     private fun clearList() {
         viewAdapter.clearData()
-        AppUtils.hideKeyboard(this)
+        hideKeyboard()
         edit_org_name.clearFocus()
         progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideKeyboard() {
+        val imm = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view = this.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(this)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }

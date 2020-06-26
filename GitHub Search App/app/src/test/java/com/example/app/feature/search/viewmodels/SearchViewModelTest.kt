@@ -1,6 +1,7 @@
 package com.example.app.feature.search.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.example.app.common.Failure
 import com.example.app.common.Success
 import com.example.app.feature.search.CoroutinesTestRule
 import com.example.app.feature.search.datamodel.GithubRepos
@@ -16,21 +17,20 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 
 
 @RunWith(MockitoJUnitRunner::class)
+@ExperimentalCoroutinesApi
 class SearchViewModelTest {
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    @ExperimentalCoroutinesApi
     @get:Rule
     var coroutinesTestRule = CoroutinesTestRule()
 
-    @Spy
+    //@Spy
     private lateinit var searchViewModel: SearchViewModel
 
     @Mock
@@ -38,18 +38,27 @@ class SearchViewModelTest {
 
     @Before
     fun setUp() {
-        searchViewModel.githubRepository = githubRepository
+        searchViewModel = SearchViewModel(githubRepository)
         searchViewModel.dispatcher = Dispatchers.Main
     }
 
-    @ExperimentalCoroutinesApi
     @Test
-    fun `should update repos on searchRepos`() {
+    fun `reposResult is Success on searchRepos Success`() {
         coroutinesTestRule.testDispatcher.runBlockingTest {
-            Assert.assertNull(searchViewModel.repos.value)
+            Assert.assertNull(searchViewModel.reposResult.value)
             `when`(githubRepository.searchRepos("github")).thenReturn(Success(GithubReposModel(GithubRepos())))
             searchViewModel.searchRepos("github")
-            Assert.assertNotNull(searchViewModel.repos.value)
+            Assert.assertTrue(searchViewModel.reposResult.value is Success)
+        }
+    }
+
+    @Test
+    fun `reposResult is Failure on searchRepos Failure`() {
+        coroutinesTestRule.testDispatcher.runBlockingTest {
+            Assert.assertNull(searchViewModel.reposResult.value)
+            `when`(githubRepository.searchRepos("github")).thenReturn(Failure())
+            searchViewModel.searchRepos("github")
+            Assert.assertTrue(searchViewModel.reposResult.value is Failure)
         }
     }
 }

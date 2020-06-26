@@ -1,13 +1,12 @@
-package com.example.app.feature.search.ui
+package com.example.app.feature.search.util
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.app.R
-import com.example.app.common.AppUtils
 import com.example.app.feature.search.datamodel.Item
 
 class SearchAdapter(private var mItems: ArrayList<Item>) : RecyclerView.Adapter<RowViewHolder>() {
@@ -26,12 +25,6 @@ class SearchAdapter(private var mItems: ArrayList<Item>) : RecyclerView.Adapter<
     override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
         val textView = holder.itemView.findViewById<TextView>(R.id.tv_repo)
         textView.text = mItems[position].name
-
-        holder.itemView.setOnClickListener {
-            mItems[position].htmlURL?.let { htmlUrl ->
-                AppUtils.launchChromeCustomTabs(it.context as Activity, htmlUrl)
-            }
-        }
     }
 
     override fun getItemCount(): Int {
@@ -39,9 +32,13 @@ class SearchAdapter(private var mItems: ArrayList<Item>) : RecyclerView.Adapter<
     }
 
     fun updateData(items: ArrayList<Item>) {
+        /*val diffCallback = ItemDiffCallback(mItems, items)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)*/
+
         mItems.clear()
         mItems.addAll(items)
         notifyDataSetChanged()
+        //diffResult.dispatchUpdatesTo(this)
     }
 
     fun clearData() {

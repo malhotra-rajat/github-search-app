@@ -1,21 +1,25 @@
 package com.example.app.feature.search.network
 
-import com.example.app.App
 import com.example.app.common.ErrorManager
-import com.example.app.common.NetworkManager
 import com.example.app.common.Result
 import com.example.app.common.Success
 import com.example.app.feature.search.datamodel.GithubRepos
+import com.google.gson.Gson
+import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.url
+import javax.inject.Inject
 
-class GithubApi {
+class GithubApi @Inject constructor(
+    private val client: HttpClient,
+    private val gson: Gson,
+    private val errorManager: ErrorManager
+) {
     private val BASE_URL = "https://api.github.com"
 
     suspend fun searchRepos(org: String): Result<GithubRepos> {
         val url = "$BASE_URL/search/repositories"
-        val client = NetworkManager.client()
 
         return try {
             val json = client.get<String> {
@@ -25,12 +29,11 @@ class GithubApi {
                 parameter("per_page", "3")
                 url(url)
             }
-            client.close()
-            val repos = App.mInstance.gson.fromJson(json, GithubRepos::class.java)
+            val repos = gson.fromJson(json, GithubRepos::class.java)
             Success(repos)
 
         } catch (exception: Exception) {
-            ErrorManager.getFailure(exception)
+            errorManager.getFailure(exception)
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.app.common.datamodel
+package com.example.app.feature.search.datamodel
 
 import com.google.gson.annotations.SerializedName
 

@@ -5,10 +5,11 @@ import com.example.app.common.Result
 import com.example.app.common.Success
 import com.example.app.feature.search.domain.GithubReposModel
 import com.example.app.feature.search.network.GithubApi
+import javax.inject.Inject
 
-class GithubRepository {
+class GithubRepository @Inject constructor(private val githubApi: GithubApi) {
     suspend fun searchRepos(org: String): Result<GithubReposModel> {
-        val gitHubApiResponse = GithubApi().searchRepos(org)
+        val gitHubApiResponse = githubApi.searchRepos(org)
 
         return if (gitHubApiResponse is Success) {
             Success(
