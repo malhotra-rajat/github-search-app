@@ -30,7 +30,6 @@ class SearchViewModelTest {
     @get:Rule
     var coroutinesTestRule = CoroutinesTestRule()
 
-    //@Spy
     private lateinit var searchViewModel: SearchViewModel
 
     @Mock

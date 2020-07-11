@@ -16,10 +16,10 @@ class GithubApi @Inject constructor(
     private val gson: Gson,
     private val errorManager: ErrorManager
 ) {
-    private val BASE_URL = "https://api.github.com"
+    private val baseUrl = "https://api.github.com"
 
     suspend fun searchRepos(org: String): Result<GithubRepos> {
-        val url = "$BASE_URL/search/repositories"
+        val url = "$baseUrl/search/repositories"
 
         return try {
             val json = client.get<String> {

@@ -32,13 +32,13 @@ class SearchAdapter(private var mItems: ArrayList<Item>) : RecyclerView.Adapter<
     }
 
     fun updateData(items: ArrayList<Item>) {
-        /*val diffCallback = ItemDiffCallback(mItems, items)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)*/
+        val diffCallback = ItemDiffCallback(mItems, items)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
 
         mItems.clear()
         mItems.addAll(items)
         notifyDataSetChanged()
-        //diffResult.dispatchUpdatesTo(this)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun clearData() {

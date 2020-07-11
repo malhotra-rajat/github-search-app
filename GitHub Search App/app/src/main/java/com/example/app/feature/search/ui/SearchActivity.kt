@@ -61,33 +61,6 @@ class SearchActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
-   /*     btn_post.setOnClickListener {
-            lifecycleScope.launch {
-                var result: Result<SubmitPostResponse>? = null
-                withContext(Dispatchers.IO) {
-                    result = TypeCodeApi().submitPost(SubmitPostInfo("foo", "bar", 1))
-                }
-                withContext(Dispatchers.Main) {
-                    if (result is Success) {
-                        val id = (result as Success<SubmitPostResponse>).data.id
-                        Toast.makeText(
-                            this@SearchActivity,
-                            "successfully posted: $id",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    else {
-                        val error = (result as Failure<SubmitPostResponse>).errorString
-                        Toast.makeText(
-                            this@SearchActivity,
-                            "Failure: $error",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-        }*/
     }
 
     private fun observeViewModel() {
