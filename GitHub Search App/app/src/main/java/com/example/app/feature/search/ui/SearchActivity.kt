@@ -8,27 +8,25 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.app.R
-import com.example.app.common.Failure
-import com.example.app.common.Success
+import com.example.app.common.Status
+import com.example.app.databinding.ActivitySearchBinding
 import com.example.app.feature.search.util.SearchAdapter
 import com.example.app.feature.search.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_search.*
-
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var viewAdapter: SearchAdapter
     private val searchViewModel: SearchViewModel by viewModels()
+    private lateinit var binding: ActivitySearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         initUI()
         observeViewModel()
     }
@@ -38,21 +36,21 @@ class SearchActivity : AppCompatActivity() {
         viewAdapter = SearchAdapter(ArrayList())
 
         val dividerItemDecoration = DividerItemDecoration(
-            rv_results.context,
+            binding.rvResults.context,
             linearLayoutManager.orientation
         )
 
-        rv_results.apply {
+        binding.rvResults.apply {
             layoutManager = linearLayoutManager
             adapter = viewAdapter
             addItemDecoration(dividerItemDecoration)
         }
 
-        btn_search.setOnClickListener {
+        binding.btnSearch.setOnClickListener {
             search()
         }
 
-        edit_org_name.setOnEditorActionListener { _, actionId, _ ->
+        binding.editOrgName.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     search()
@@ -64,17 +62,21 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        searchViewModel.reposResult.observe(this, Observer {
-            progressBar.visibility = View.GONE
-            when (it) {
-                is Success -> {
-                    it.data.repos?.let { repos ->
+        searchViewModel.reposResult.observe(this, {
+            binding.progressBar.visibility = View.GONE
+            when (it.status) {
+
+                Status.SUCCESS -> {
+                    it.data?.items?.let { repos ->
                         viewAdapter.updateData(repos)
                     }
                 }
-                is Failure -> {
-                    it.errorString?.let { err ->
-                        Toast.makeText(this, err, Toast.LENGTH_SHORT).show()
+                Status.LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    it.message?.let { err ->
+                        Toast.makeText(this, err, Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -82,7 +84,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun search() {
-        val searchText = edit_org_name.text.toString()
+        val searchText = binding.editOrgName.text.toString()
         if (searchText.isNotEmpty()) {
             clearList()
             searchViewModel.searchRepos(searchText)
@@ -94,8 +96,8 @@ class SearchActivity : AppCompatActivity() {
     private fun clearList() {
         viewAdapter.clearData()
         hideKeyboard()
-        edit_org_name.clearFocus()
-        progressBar.visibility = View.VISIBLE
+        binding.editOrgName.clearFocus()
+//        binding.progressBar.visibility = View.VISIBLE
     }
 
     private fun hideKeyboard() {

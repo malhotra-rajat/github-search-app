@@ -6,7 +6,8 @@ import com.example.app.feature.search.datamodel.Item
 /**
  * Created by malho on 15,June,2020
  */
-class ItemDiffCallback(private val oldItems: ArrayList<Item>, private val newItems: ArrayList<Item>) : DiffUtil.Callback() {
+class ItemDiffCallback(private val oldItems: List<Item>, private val newItems: List<Item>) :
+    DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         return oldItems[oldItemPosition].id == newItems[oldItemPosition].id
