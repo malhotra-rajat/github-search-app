@@ -8,11 +8,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.app.common.Failure
-import com.example.app.common.Success
+import com.example.app.common.Status
 import com.example.app.databinding.ActivitySearchBinding
 import com.example.app.feature.search.util.SearchAdapter
 import com.example.app.feature.search.viewmodels.SearchViewModel
@@ -64,17 +62,21 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        searchViewModel.reposResult.observe(this, Observer {
+        searchViewModel.reposResult.observe(this, {
             binding.progressBar.visibility = View.GONE
-            when (it) {
-                is Success -> {
-                    it.data.repos?.let { repos ->
+            when (it.status) {
+
+                Status.SUCCESS -> {
+                    it.data?.items?.let { repos ->
                         viewAdapter.updateData(repos)
                     }
                 }
-                is Failure -> {
-                    it.errorString?.let { err ->
-                        Toast.makeText(this, err, Toast.LENGTH_SHORT).show()
+                Status.LOADING -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    it.message?.let { err ->
+                        Toast.makeText(this, err, Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -95,7 +97,7 @@ class SearchActivity : AppCompatActivity() {
         viewAdapter.clearData()
         hideKeyboard()
         binding.editOrgName.clearFocus()
-        binding.progressBar.visibility = View.VISIBLE
+//        binding.progressBar.visibility = View.VISIBLE
     }
 
     private fun hideKeyboard() {

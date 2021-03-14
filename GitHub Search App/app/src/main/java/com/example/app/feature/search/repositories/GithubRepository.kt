@@ -1,25 +1,22 @@
 package com.example.app.feature.search.repositories
 
-import com.example.app.common.Failure
-import com.example.app.common.Result
-import com.example.app.common.Success
-import com.example.app.feature.search.domain.GithubReposModel
-import com.example.app.feature.search.network.GithubApi
+import com.example.app.common.ErrorManager
+import com.example.app.common.Resource
+import com.example.app.feature.search.datamodel.GithubRepos
+import com.example.app.feature.search.network.GithubApiHelper
 import javax.inject.Inject
 
-class GithubRepository @Inject constructor(private val githubApi: GithubApi) {
-    suspend fun searchRepos(org: String): Result<GithubReposModel> {
-        val gitHubApiResponse = githubApi.searchRepos(org)
+class GithubRepository @Inject constructor(
+    private val githubApiHelper: GithubApiHelper,
+    private val errorManager: ErrorManager
+) {
+    suspend fun searchRepos(org: String): Resource<GithubRepos> {
+        val response = githubApiHelper.searchRepos("org:$org", "stars", "desc", "3")
+        if (response.isSuccessful) {
+            return Resource.success(response.body())
 
-        return if (gitHubApiResponse is Success) {
-            Success(
-                GithubReposModel(
-                    gitHubApiResponse.data
-                )
-            )
         } else {
-            val err = gitHubApiResponse as Failure
-            return Failure(err.errorString)
+            return Resource.error(errorManager.getError(response), null)
         }
     }
 }

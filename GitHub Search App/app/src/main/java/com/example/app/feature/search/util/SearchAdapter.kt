@@ -31,7 +31,7 @@ class SearchAdapter(private var mItems: ArrayList<Item>) : RecyclerView.Adapter<
         return mItems.size
     }
 
-    fun updateData(items: ArrayList<Item>) {
+    fun updateData(items: List<Item>) {
         val diffCallback = ItemDiffCallback(mItems, items)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
 
