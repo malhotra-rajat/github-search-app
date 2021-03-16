@@ -6,7 +6,9 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class ErrorManager @Inject constructor(private val moshi: Moshi) {
+
     private val GENERIC_ERROR = "Something went wrong"
+
     fun getError(response: Response<GithubRepos>): String {
         try {
             val responseJson = response.errorBody()?.string()

@@ -1,8 +1,6 @@
 package com.example.app.common
 
 import com.example.app.BuildConfig
-import com.example.app.feature.search.network.GithubApiHelper
-import com.example.app.feature.search.network.GithubApiHelperImpl
 import com.example.app.feature.search.network.GithubApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -60,9 +58,4 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideGithubApiService(retrofit: Retrofit) = retrofit.create(GithubApiService::class.java)
-
-    @Provides
-    @Singleton
-    fun provideGithubApiHelper(apiHelper: GithubApiHelperImpl): GithubApiHelper = apiHelper
-
 }
