@@ -1,4 +1,4 @@
-package com.example.app.common
+package com.example.app.di
 
 
 import dagger.Module
@@ -7,4 +7,4 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-class ApplicationModule
+object ApplicationModule

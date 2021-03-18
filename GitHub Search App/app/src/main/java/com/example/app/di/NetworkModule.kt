@@ -1,4 +1,4 @@
-package com.example.app.common
+package com.example.app.di
 
 import com.example.app.BuildConfig
 import com.example.app.feature.search.network.GithubApiService
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
+object NetworkModule {
 
     @Provides
     fun provideBaseUrl() = "https://api.github.com"
