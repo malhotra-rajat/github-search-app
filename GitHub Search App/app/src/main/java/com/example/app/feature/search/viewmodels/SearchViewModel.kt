@@ -17,17 +17,17 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(private val githubRepository: GithubRepository) :
     ViewModel() {
 
-    private val _reposResult = MutableLiveData<Resource<GithubRepos>>()
+    private val _reposResource = MutableLiveData<Resource<GithubRepos>>()
 
-    val reposResult: LiveData<Resource<GithubRepos>>
-        get() = _reposResult
+    val reposResource: LiveData<Resource<GithubRepos>>
+        get() = _reposResource
 
     var dispatcher = Dispatchers.IO
 
     fun searchRepos(org: String) {
         viewModelScope.launch(dispatcher) {
-            _reposResult.postValue(Resource.loading(null))
-            _reposResult.postValue(githubRepository.searchRepos(org))
+            _reposResource.postValue(Resource.loading(null))
+            _reposResource.postValue(githubRepository.searchRepos(org))
         }
     }
 }

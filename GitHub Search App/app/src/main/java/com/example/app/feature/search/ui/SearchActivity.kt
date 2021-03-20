@@ -62,7 +62,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        searchViewModel.reposResult.observe(this, {
+        searchViewModel.reposResource.observe(this, {
             binding.progressBar.visibility = View.GONE
             when (it.status) {
 

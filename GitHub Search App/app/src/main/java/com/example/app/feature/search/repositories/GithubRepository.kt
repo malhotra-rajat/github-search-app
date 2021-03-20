@@ -12,11 +12,10 @@ class GithubRepository @Inject constructor(
 ) {
     suspend fun searchRepos(org: String): Resource<GithubRepos> {
         val response = githubApiService.searchRepos("org:$org", "stars", "desc", "3")
-        if (response.isSuccessful) {
-            return Resource.success(response.body())
-
+        return if (response.isSuccessful && response.body() is GithubRepos) {
+            Resource.success(response.body())
         } else {
-            return Resource.error(errorManager.getError(response), null)
+            Resource.error(errorManager.getError(response), null)
         }
     }
 }

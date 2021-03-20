@@ -1,11 +1,10 @@
 package com.example.app.feature.search.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.example.app.common.Failure
-import com.example.app.common.Success
+import com.example.app.common.Resource
+import com.example.app.common.Status
 import com.example.app.feature.search.CoroutinesTestRule
 import com.example.app.feature.search.datamodel.GithubRepos
-import com.example.app.feature.search.domain.GithubReposModel
 import com.example.app.feature.search.repositories.GithubRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,21 +42,24 @@ class SearchViewModelTest {
 
     @Test
     fun `reposResult is Success on searchRepos Success`() {
+        val data = GithubRepos(0, false, listOf())
+        val reposResourceSuccess = Resource<GithubRepos>(Status.SUCCESS, data, null)
         coroutinesTestRule.testDispatcher.runBlockingTest {
-            Assert.assertNull(searchViewModel.reposResult.value)
-            `when`(githubRepository.searchRepos("github")).thenReturn(Success(GithubReposModel(GithubRepos())))
+            Assert.assertNull(searchViewModel.reposResource.value)
+            `when`(githubRepository.searchRepos("github")).thenReturn(Resource.success(data))
             searchViewModel.searchRepos("github")
-            Assert.assertTrue(searchViewModel.reposResult.value is Success)
+            Assert.assertEquals(reposResourceSuccess, searchViewModel.reposResource.value)
         }
     }
 
     @Test
     fun `reposResult is Failure on searchRepos Failure`() {
+        val reposResourceError = Resource.error("error", null)
         coroutinesTestRule.testDispatcher.runBlockingTest {
-            Assert.assertNull(searchViewModel.reposResult.value)
-            `when`(githubRepository.searchRepos("github")).thenReturn(Failure())
+            Assert.assertNull(searchViewModel.reposResource.value)
+            `when`(githubRepository.searchRepos("github")).thenReturn(reposResourceError)
             searchViewModel.searchRepos("github")
-            Assert.assertTrue(searchViewModel.reposResult.value is Failure)
+            Assert.assertEquals(reposResourceError, searchViewModel.reposResource.value)
         }
     }
 }
