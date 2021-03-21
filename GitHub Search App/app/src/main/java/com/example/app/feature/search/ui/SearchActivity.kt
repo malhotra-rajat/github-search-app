@@ -97,7 +97,6 @@ class SearchActivity : AppCompatActivity() {
         viewAdapter.clearData()
         hideKeyboard()
         binding.editOrgName.clearFocus()
-//        binding.progressBar.visibility = View.VISIBLE
     }
 
     private fun hideKeyboard() {
