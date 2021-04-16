@@ -43,7 +43,7 @@ class SearchViewModelTest {
     @Test
     fun `reposResult is Success on searchRepos Success`() {
         val data = GithubRepos(0, false, listOf())
-        val reposResourceSuccess = Resource<GithubRepos>(Status.SUCCESS, data, null)
+        val reposResourceSuccess = Resource(Status.SUCCESS, data, null)
         coroutinesTestRule.testDispatcher.runBlockingTest {
             Assert.assertNull(searchViewModel.reposResource.value)
             `when`(githubRepository.searchRepos("github")).thenReturn(Resource.success(data))
